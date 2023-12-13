@@ -14,12 +14,12 @@ import (
 
 // DataSourceConfig 数据源配置
 type dataSourceConfig struct {
-	Name     string                      `mapstructure:"name"`
-	Url      string                      `mapstructure:"url"`
-	UserName string                      `mapstructure:"username"`
-	Password string                      `mapstructure:"password"`
-	Debug    bool                        `mapstructure:"debug"`
-	Pool     *datasources.DataSourcePool `mapstructure:"pool"`
+	Name     string                      `mapstructure:"name" config:"name"`
+	Url      string                      `mapstructure:"url" config:"url"`
+	UserName string                      `mapstructure:"username" config:"username"`
+	Password string                      `mapstructure:"password" config:"password"`
+	Debug    bool                        `mapstructure:"debug" config:"debug"`
+	Pool     *datasources.DataSourcePool `mapstructure:"pool" config:"pool"`
 }
 
 type MySqlDataSource struct {
@@ -30,6 +30,7 @@ type MySqlDataSource struct {
 	count            int
 	lock             sync.Mutex
 	log              xlog.ILogger
+	isDebug          bool
 }
 
 // NewMysqlDataSource 初始化MySQL数据源
@@ -48,6 +49,7 @@ func NewMysqlDataSource(configuration abstractions.IConfiguration) *MySqlDataSou
 		connectionString: "",
 		config:           configuration,
 		connPool:         make(map[string]pool.Pool, 0),
+		isDebug:          datasourcesConfig.Debug,
 		log:              log,
 	}
 	if p != nil {
